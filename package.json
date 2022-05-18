@@ -7,8 +7,9 @@
     "fmt": "npx prettier --write .",
     "lint": "npx eslint .",
     "dev": "npx ts-node src/main.ts",
-    "start": "npm run build && node build/main.js",
-    "build": "npx tsc -p ."
+    "start": "node build/main.js",
+    "build": "npx tsc -p .",
+    "run": "npm run build && npm run start"
   },
   "keywords": [],
   "author": "",
