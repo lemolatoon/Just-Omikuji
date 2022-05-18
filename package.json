@@ -8,6 +8,7 @@
     "lint": "npx eslint .",
     "dev": "npx ts-node src/main.ts",
     "start": "node build/main.js",
+    "tsx": "tsc",
     "build": "npx tsc -p .",
     "run": "npm run build && npm run start"
   },
