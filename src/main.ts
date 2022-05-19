@@ -107,6 +107,9 @@ client.on("messageCreate", async (message: Message) => {
         const low = lowest as [string[], Predictation, number[], number[]];
         console.log(`high:${high}\n`);
         console.log(`low:${low}\n`);
+        if (high === undefined || low === undefined) {
+            return;
+        }
 
         let high_mess = `現在の最も運がいい人\n${high[0].toString()}\n`;
         high_mess = high_mess + `${high[1]}の回数\n`;
