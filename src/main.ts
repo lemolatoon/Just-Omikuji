@@ -77,6 +77,8 @@ client.on("messageCreate", async (message: Message) => {
             } else if (pred2num(highest[1]) > pred2num(pred)) {
                 // update
                 highest = [[user_name], pred, [cnt], [try_cnt]];
+                console.log(`${pred2num(highest[1])}, ${pred2num(pred)}\n`)
+                console.log(`${pred} is better than ${highest[1]}\n`);
             } else if (highest[1] == pred) {
                 // same
                 highest[0].push(user_name);
@@ -90,8 +92,8 @@ client.on("messageCreate", async (message: Message) => {
                 // init
                 lowest = [[user_name], pred, [cnt], [try_cnt]];
             } else if (pred2num(lowest[1]) < pred2num(pred)) {
-                console.log(`${pred2num(lowest[1])}, ${pred2num(pred)}`)
-                console.log(`${lowest[1]}より${pred}のほうが運悪い`);
+                console.log(`${pred2num(lowest[1])}, ${pred2num(pred)}\n`)
+                console.log(`${pred} is worse than ${lowest[1]}\n`);
                 // update
                 lowest = [[user_name], pred, [cnt], [try_cnt]];
             } else if (lowest[1] == pred) {
@@ -103,8 +105,8 @@ client.on("messageCreate", async (message: Message) => {
         }
         const high = highest as [string[], Predictation, number[], number[]];
         const low = lowest as [string[], Predictation, number[], number[]];
-        console.log(`high\n${high}`);
-        console.log(`high\n${low}`);
+        console.log(`high:${high}\n`);
+        console.log(`low:${low}\n`);
 
         let high_mess = `現在の最も運がいい人\n${high[0].toString()}\n`;
         high_mess = high_mess + `${high[1]}の回数\n`;
@@ -127,8 +129,6 @@ client.on("messageCreate", async (message: Message) => {
         message.content == "!omikuji" ||
         message.content == "!神签"
     ) {
-        console.log(high_light_map);
-        console.log(low_light_map);
 
         const r = Math.random() * sum;
         for (let i = 0; i < strs.length; i++) {
@@ -139,31 +139,37 @@ client.on("messageCreate", async (message: Message) => {
                 if (sender === undefined) {
                     break;
                 }
-                const val = high_light_map.get(sender);
+                const val_high = high_light_map.get(sender);
                 let max;
                 let count_high;
                 let try_count;
-                if (val !== undefined) {
-                    max = strs[Math.min(i, pred2num(val[0]))];
-                    if (max == val[0]) {
-                        count_high = val[1] + 1;
-                    } else {
+                if (val_high !== undefined) {
+                    max = strs[Math.min(i, pred2num(val_high[0]))];
+                    if (max == val_high[0] && max == strs[i]) { // same
+                        count_high = val_high[1] + 1;
+                    } else if (max == val_high[0] && max != strs[i]) { // came worse
+                        count_high = val_high[1];
+                    } else { // came better
                         count_high = 1;
                     }
-                    try_count = val[2] + 1;
+                    try_count = val_high[2] + 1;
                 } else {
                     max = strs[i];
                     count_high = 1;
                     try_count = 1;
                 }
+                console.log(`set: ${[max, count_high, try_count].toString()}`)
                 high_light_map.set(sender, [max, count_high, try_count]);
 
+                const val_low = low_light_map.get(sender);
                 let min;
                 let count_low;
-                if (val !== undefined) {
-                    min = strs[Math.max(i, pred2num(val[0]))];
-                    if (min == val[0]) {
-                        count_low = val[1] + 1;
+                if (val_low !== undefined) {
+                    min = strs[Math.max(i, pred2num(val_low[0]))];
+                    if (min == val_low[0] && min == strs[i]) { // same
+                        count_low = val_low[1] + 1;
+                    } else if (min == val_low[0] && min != strs[i]) { // came better one
+                        count_low = val_low[1];
                     } else {
                         count_low = 1;
                     }
@@ -171,7 +177,13 @@ client.on("messageCreate", async (message: Message) => {
                     min = strs[i];
                     count_low = 1;
                 }
+                console.log(`set: ${[min, count_low, try_count].toString()}`)
                 low_light_map.set(sender, [min, count_low, try_count]);
+
+                console.log("high:");
+                console.log(high_light_map);
+                console.log("low: ");
+                console.log(low_light_map);
 
                 break;
             }
