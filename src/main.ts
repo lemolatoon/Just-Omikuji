@@ -95,15 +95,15 @@ client.on("messageCreate", async (message: Message) => {
     const high = highest as [string[], Predictation, number[]];
     const low = lowest as [string[], Predictation, number[]];
 
-    let high_mess = `現在の最も運がいい人\n${high[0]}\n`;
+    let high_mess = `現在の最も運がいい人\n${high[0].toString()}\n`;
     high_mess = high_mess + `${high[1]}の回数\n`;
     for (let i = 0; i < high[0].length; i++) {
       high_mess = high_mess + `${high[0][i]} : ${high[2][i]}\n`;
     }
 
-    let low_mess = `現在の最も運が悪い人\n${high[0]}\n`;
+    let low_mess = `現在の最も運が悪い人\n${high[0].toString()}\n`;
     low_mess = low_mess + `${low[1]}の回数\n`;
-    for (let i = 0; i < high[0].length; i++) {
+    for (let i = 0; i < low[0].length; i++) {
       low_mess = low_mess + `${low[0][i]} : ${low[2][i]}\n`;
     }
 
@@ -124,7 +124,10 @@ client.on("messageCreate", async (message: Message) => {
       if (r < sum_rates[i]) {
         message.channel.send(strs[i]);
 
-        const sender = message.client.user + "";
+        const sender = message.client.user?.toString().substring(1);
+        if (sender === undefined) {
+          break;
+        }
         const val = high_light_map.get(sender);
         let max;
         let count_high;
