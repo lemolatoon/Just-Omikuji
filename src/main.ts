@@ -47,8 +47,8 @@ const strs: Predictation[] = [
     "大大凶",
 ];
 
-const high_light_map: Map<string, [Predictation, number, number]> = new Map();
-const low_light_map: Map<string, [Predictation, number, number]> = new Map();
+let high_light_map: Map<string, [Predictation, number, number]> = new Map();
+let low_light_map: Map<string, [Predictation, number, number]> = new Map();
 
 client.once("ready", () => {
     console.log("Ready!!");
@@ -60,6 +60,11 @@ client.on("messageCreate", async (message: Message) => {
     // message.channel.send("message created");
     if (message.content.startsWith("!ping")) {
         message.channel.send(`ping: ${client.ws.ping} ms`);
+    }
+
+    if (message.content == "!reset") {
+        high_light_map = new Map();
+        low_light_map = new Map();
     }
 
     if (message.content == "!status" || message.content == "！ステータス") {
