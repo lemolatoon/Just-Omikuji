@@ -90,6 +90,8 @@ client.on("messageCreate", async (message: Message) => {
                 // init
                 lowest = [[user_name], pred, [cnt], [try_cnt]];
             } else if (pred2num(lowest[1]) < pred2num(pred)) {
+                console.log(`${pred2num(lowest[1])}, ${pred2num(pred)}`)
+                console.log(`${lowest[1]}より${pred}のほうが運悪い`);
                 // update
                 lowest = [[user_name], pred, [cnt], [try_cnt]];
             } else if (lowest[1] == pred) {
@@ -101,17 +103,19 @@ client.on("messageCreate", async (message: Message) => {
         }
         const high = highest as [string[], Predictation, number[], number[]];
         const low = lowest as [string[], Predictation, number[], number[]];
+        console.log(`high\n${high}`);
+        console.log(`high\n${low}`);
 
         let high_mess = `現在の最も運がいい人\n${high[0].toString()}\n`;
         high_mess = high_mess + `${high[1]}の回数\n`;
         for (let i = 0; i < high[0].length; i++) {
-            high_mess = high_mess + `${high[0][i]} : ${high[2][i]} / ${high[3][i]} (${Math.round(high[2][i] / high[3][i] * 100)})\n`;
+            high_mess = high_mess + `${high[0][i]} : ${high[2][i]} / ${high[3][i]} (${Math.round(high[2][i] / high[3][i] * 100)}%)\n`;
         }
 
-        let low_mess = `現在の最も運が悪い人\n${high[0].toString()}\n`;
+        let low_mess = `現在の最も運が悪い人\n${low[0].toString()}\n`;
         low_mess = low_mess + `${low[1]}の回数\n`;
         for (let i = 0; i < low[0].length; i++) {
-            low_mess = low_mess + `${low[0][i]} : ${low[2][i]} / ${low[3][i]} (${Math.round(low[2][i] / low[3][i] * 100)})\n`;
+            low_mess = low_mess + `${low[0][i]} : ${low[2][i]} / ${low[3][i]} (${Math.round(low[2][i] / low[3][i] * 100)}%)\n`;
         }
 
         message.channel.send(`${high_mess}\n${low_mess}`);
