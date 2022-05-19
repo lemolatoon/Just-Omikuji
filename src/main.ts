@@ -47,8 +47,8 @@ const strs: Predictation[] = [
     "大大凶",
 ];
 
-const high_light_map: Map<string, [Predictation, number]> = new Map();
-const low_light_map: Map<string, [Predictation, number]> = new Map();
+const high_light_map: Map<string, [Predictation, number, number]> = new Map();
+const low_light_map: Map<string, [Predictation, number, number]> = new Map();
 
 client.once("ready", () => {
     console.log("Ready!!");
@@ -63,51 +63,53 @@ client.on("messageCreate", async (message: Message) => {
     }
 
     if (message.content == "!status" || message.content == "！ステータス") {
-        let highest: [string[], Predictation, number[]] | undefined = undefined;
-        let lowest: [string[], Predictation, number[]] | undefined = undefined;
-        for (const [user_name, [pred, cnt]] of high_light_map) {
+        let highest: [string[], Predictation, number[], number[]] | undefined = undefined;
+        let lowest: [string[], Predictation, number[], number[]] | undefined = undefined;
+        for (const [user_name, [pred, cnt, try_cnt]] of high_light_map) {
             if (highest == undefined) {
                 // init
-                highest = [[user_name], pred, [cnt]];
+                highest = [[user_name], pred, [cnt], [try_cnt]];
             } else if (pred2num(highest[1]) > pred2num(pred)) {
                 // update
-                highest = [[user_name], pred, [cnt]];
+                highest = [[user_name], pred, [cnt], [try_cnt]];
             } else if (highest[1] == pred) {
                 // same
                 highest[0].push(user_name);
                 highest[2].push(cnt);
+                highest[3].push(try_cnt);
             }
         }
 
-        for (const [user_name, [pred, cnt]] of low_light_map) {
+        for (const [user_name, [pred, cnt, try_cnt]] of low_light_map) {
             if (lowest == undefined) {
                 // init
-                lowest = [[user_name], pred, [cnt]];
+                lowest = [[user_name], pred, [cnt], [try_cnt]];
             } else if (pred2num(lowest[1]) < pred2num(pred)) {
                 // update
-                lowest = [[user_name], pred, [cnt]];
+                lowest = [[user_name], pred, [cnt], [try_cnt]];
             } else if (lowest[1] == pred) {
                 // same
                 lowest[0].push(user_name);
                 lowest[2].push(cnt);
+                lowest[3].push(try_cnt)
             }
         }
-        const high = highest as [string[], Predictation, number[]];
-        const low = lowest as [string[], Predictation, number[]];
+        const high = highest as [string[], Predictation, number[], number[]];
+        const low = lowest as [string[], Predictation, number[], number[]];
 
         let high_mess = `現在の最も運がいい人\n${high[0].toString()}\n`;
         high_mess = high_mess + `${high[1]}の回数\n`;
         for (let i = 0; i < high[0].length; i++) {
-            high_mess = high_mess + `${high[0][i]} : ${high[2][i]}\n`;
+            high_mess = high_mess + `${high[0][i]} : ${high[2][i]} / ${high[3][i]} (${Math.round(high[2][i] / high[3][i] * 100)})\n`;
         }
 
         let low_mess = `現在の最も運が悪い人\n${high[0].toString()}\n`;
         low_mess = low_mess + `${low[1]}の回数\n`;
         for (let i = 0; i < low[0].length; i++) {
-            low_mess = low_mess + `${low[0][i]} : ${low[2][i]}\n`;
+            low_mess = low_mess + `${low[0][i]} : ${low[2][i]} / ${low[3][i]} (${Math.round(low[2][i] / low[3][i] * 100)})\n`;
         }
 
-        message.channel.send(`${high_mess}\n\n${low_mess}`);
+        message.channel.send(`${high_mess}\n${low_mess}`);
     }
 
     if (
@@ -131,6 +133,7 @@ client.on("messageCreate", async (message: Message) => {
                 const val = high_light_map.get(sender);
                 let max;
                 let count_high;
+                let try_count;
                 if (val !== undefined) {
                     max = strs[Math.min(i, pred2num(val[0]))];
                     if (max == val[0]) {
@@ -138,11 +141,13 @@ client.on("messageCreate", async (message: Message) => {
                     } else {
                         count_high = 1;
                     }
+                    try_count = val[2] + 1;
                 } else {
                     max = strs[i];
                     count_high = 1;
+                    try_count = 1;
                 }
-                high_light_map.set(sender, [max, count_high]);
+                high_light_map.set(sender, [max, count_high, try_count]);
 
                 let min;
                 let count_low;
@@ -157,7 +162,7 @@ client.on("messageCreate", async (message: Message) => {
                     min = strs[i];
                     count_low = 1;
                 }
-                low_light_map.set(sender, [min, count_low]);
+                low_light_map.set(sender, [min, count_low, try_count]);
 
                 break;
             }
