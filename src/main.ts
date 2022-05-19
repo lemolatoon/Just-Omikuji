@@ -38,9 +38,9 @@ const sum_rates: number[] = get_sum_list(rates);
 const strs: Predictation[] = [
     "大大吉",
     "大吉",
+    "吉",
     "中吉",
     "小吉",
-    "吉",
     "末吉",
     "凶",
     "大凶",
@@ -214,11 +214,11 @@ function pred2num(pred: Predictation): number {
             return 0;
         case Predictation.DAIKICHI:
             return 1;
-        case Predictation.CHUKICHI:
-            return 2;
-        case Predictation.SYOKICHI:
-            return 3;
         case Predictation.KICHI:
+            return 2;
+        case Predictation.CHUKICHI:
+            return 3;
+        case Predictation.SYOKICHI:
             return 4;
         case Predictation.SUEKICHI:
             return 5;
