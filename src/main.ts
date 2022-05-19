@@ -127,10 +127,10 @@ client.on("messageCreate", async (message: Message) => {
     }
 
     if (
-        message.content == "!おみくじ" ||
-        message.content == "！おみくじ" ||
-        message.content == "!omikuji" ||
-        message.content == "!神签"
+        message.content.startsWith("!おみくじ") ||
+        message.content.startsWith("！おみくじ") ||
+        message.content.startsWith("!omikuji") ||
+        message.content.startsWith("!神签")
     ) {
 
         const r = Math.random() * sum;
