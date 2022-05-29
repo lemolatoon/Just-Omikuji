@@ -34,7 +34,6 @@ const predLevels = [0, 1, 2, 3, 4, 5, 6, 7, 8] as const;
 // const predLevels = [...range(0, num_level)] as const;
 type predLevel = typeof predLevels[number];
 
-
 const strs: Predictation[] = [
     "大大吉",
     "大吉",
@@ -77,25 +76,62 @@ client.on("messageCreate", async (message: Message) => {
         message.content.startsWith("!omikuji") ||
         message.content.startsWith("!神签")
     ) {
-        let level: predLevel = predict();
-        let pred = toPred(level);
+        let iter = 1;
+        if (message.content.split(" ").length == 2) {
+            const num = Number(message.content.split(" ")[1]);
+            if (!Number.isNaN(num) && num <= 2000) {
+                iter = num;
+            }
+            console.log(num);
+            console.log(iter);
+            for (let i = 0; i <= iter / 500; i++) {
+                if (i == iter / 500) {
+                    if (iter % 500 == 0) {
+                        break;
+                    }
+                    predict_process(iter % 500, message);
+                } else {
+                    predict_process(Math.min(iter, 500), message);
+                }
+                // await setTimeout(() => { }, 100);
+            }
+            console.log(num);
+            console.log(iter);
+            console.log(iter % 500);
+        }
+    }
+});
 
-        message.channel.send(pred);
+function predict_process(iter: number, message: Message<boolean>) {
+    if (iter >= 501 || iter <= 0) {
+        iter = 1;
+    }
+    const levels: predLevel[] = [];
+    for (let i = 0; i < iter; i++) {
+        const level: predLevel = predict();
+        levels.push(level);
+    }
 
+    let predicted_msg = "";
+    for (let i = 0; i < iter; i++) {
+        if (i != 0 && i != iter) {
+            predicted_msg = predicted_msg + ", ";
+        }
+        predicted_msg = predicted_msg + toPred(levels[i]);
         const sender = message.author.username;
         if (sender === undefined) {
             return;
         }
 
-        update_highest(sender, level);
-        update_lowest(sender, level);
-        console.log("high:");
-        console.log(high_light_map);
-        console.log("low: ");
-        console.log(low_light_map);
-
+        update_highest(sender, levels[i]);
+        update_lowest(sender, levels[i]);
     }
-});
+    message.channel.send(predicted_msg);
+    console.log("high:");
+    console.log(high_light_map);
+    console.log("low: ");
+    console.log(low_light_map);
+}
 
 function update_highest(sender: string, level: predLevel) {
     const val_high = high_light_map.get(sender);
@@ -104,11 +140,14 @@ function update_highest(sender: string, level: predLevel) {
     let try_count;
     if (val_high !== undefined) {
         max = Math.min(level, val_high[0]) as predLevel; // min of predLevel must be predLevel
-        if (max == val_high[0] && max == level) { // same
+        if (max == val_high[0] && max == level) {
+            // same
             count_high = val_high[1] + 1;
-        } else if (max == val_high[0] && max != level) { // came worse
+        } else if (max == val_high[0] && max != level) {
+            // came worse
             count_high = val_high[1];
-        } else { // came better
+        } else {
+            // came better
             count_high = 1;
         }
         try_count = val_high[2] + 1;
@@ -117,7 +156,7 @@ function update_highest(sender: string, level: predLevel) {
         count_high = 1;
         try_count = 1;
     }
-    console.log(`set: ${[toPred(max), count_high, try_count].toString()}`)
+    console.log(`set: ${[toPred(max), count_high, try_count].toString()}`);
     high_light_map.set(sender, [max, count_high, try_count]);
 }
 
@@ -128,25 +167,30 @@ function update_lowest(sender: string, level: predLevel) {
     let try_count;
     if (val_low !== undefined) {
         min = Math.max(level, val_low[0]) as predLevel; // max of predLevel must be predLevel
-        if (min == val_low[0] && min == level) { // same
+        if (min == val_low[0] && min == level) {
+            // same
             count_low = val_low[1] + 1;
-        } else if (min == val_low[0] && min != level) { // came better one
+        } else if (min == val_low[0] && min != level) {
+            // came better one
             count_low = val_low[1];
-        } else { // came worse
+        } else {
+            // came worse
             count_low = 1;
         }
         try_count = val_low[2] + 1;
-    } else { // sender's first time omikuji
+    } else {
+        // sender's first time omikuji
         min = level;
         count_low = 1;
         try_count = 1;
     }
-    console.log(`set: ${[toPred(min), count_low, try_count].toString()}`)
+    console.log(`set: ${[toPred(min), count_low, try_count].toString()}`);
     low_light_map.set(sender, [min, count_low, try_count]);
 }
 
 function get_status_message(): string {
-    let highest: [string[], predLevel, number[], number[]] | undefined = undefined;
+    let highest: [string[], predLevel, number[], number[]] | undefined =
+        undefined;
     let lowest: [string[], predLevel, number[], number[]] | undefined = undefined;
     for (const [user_name, [level, cnt, try_cnt]] of high_light_map) {
         if (highest == undefined) {
@@ -155,7 +199,7 @@ function get_status_message(): string {
         } else if (highest[1] > level) {
             // update
             highest = [[user_name], level, [cnt], [try_cnt]];
-            console.log(`${toPred(highest[1])}, ${toPred(level)}\n`)
+            console.log(`${toPred(highest[1])}, ${toPred(level)}\n`);
             console.log(`${toPred(level)} is better than ${toPred(highest[1])}\n`);
         } else if (highest[1] == level) {
             // same
@@ -170,7 +214,7 @@ function get_status_message(): string {
             // init
             lowest = [[user_name], level, [cnt], [try_cnt]];
         } else if (lowest[1] < level) {
-            console.log(`${toPred(lowest[1])}, ${toPred(level)}\n`)
+            console.log(`${toPred(lowest[1])}, ${toPred(level)}\n`);
             console.log(`${toPred(level)} is worse than ${toPred(lowest[1])}\n`);
             // update
             lowest = [[user_name], level, [cnt], [try_cnt]];
@@ -178,7 +222,7 @@ function get_status_message(): string {
             // same
             lowest[0].push(user_name);
             lowest[2].push(cnt);
-            lowest[3].push(try_cnt)
+            lowest[3].push(try_cnt);
         }
     }
     const high = highest as [string[], predLevel, number[], number[]];
@@ -192,18 +236,26 @@ function get_status_message(): string {
     let high_mess = `現在の最も運がいい人\n${high[0].toString()}\n`;
     high_mess = high_mess + `${toPred(high[1])}の回数\n`;
     for (let i = 0; i < high[0].length; i++) {
-        high_mess = high_mess + `${high[0][i]} : ${high[2][i]} / ${high[3][i]} (${Math.round(high[2][i] / high[3][i] * 100)}%)\n`;
+        high_mess =
+            high_mess +
+            `${high[0][i]} : ${high[2][i]} / ${high[3][i]} (${(
+                (high[2][i] / high[3][i]) *
+                100
+            ).toFixed(4)}%)\n`;
     }
 
     let low_mess = `現在の最も運が悪い人\n${low[0].toString()}\n`;
     low_mess = low_mess + `${toPred(low[1])}の回数\n`;
     for (let i = 0; i < low[0].length; i++) {
-        low_mess = low_mess + `${low[0][i]} : ${low[2][i]} / ${low[3][i]} (${Math.round(low[2][i] / low[3][i] * 100)}%)\n`;
+        low_mess =
+            low_mess +
+            `${low[0][i]} : ${low[2][i]} / ${low[3][i]} (${(
+                (low[2][i] / low[3][i]) *
+                100
+            ).toFixed(4)}%)\n`;
     }
 
-    return `${high_mess}\n${low_mess}`
-
-
+    return `${high_mess}\n${low_mess}`;
 }
 
 const rates: number[] = [
@@ -229,7 +281,6 @@ function predict(): predLevel {
     }
     return predLevels[num_level - 1];
 }
-
 
 function get_sum_list(list: number[]): number[] {
     const sum_list: number[] = [];
@@ -271,25 +322,24 @@ function pred2num(pred: Predictation): number {
 function toPred(level: predLevel): Predictation {
     switch (level) {
         case 0:
-            return Predictation.DAIDAIKICHI
+            return Predictation.DAIDAIKICHI;
         case 1:
-            return Predictation.DAIKICHI
+            return Predictation.DAIKICHI;
         case 2:
-            return Predictation.KICHI
+            return Predictation.KICHI;
         case 3:
-            return Predictation.CHUKICHI
+            return Predictation.CHUKICHI;
         case 4:
-            return Predictation.SYOKICHI
+            return Predictation.SYOKICHI;
         case 5:
-            return Predictation.SUEKICHI
+            return Predictation.SUEKICHI;
         case 6:
-            return Predictation.KYOU
+            return Predictation.KYOU;
         case 7:
-            return Predictation.DAIKYOU
+            return Predictation.DAIKYOU;
         case 8:
-            return Predictation.DAIDAIKYOU
+            return Predictation.DAIDAIKYOU;
     }
-
 }
 
 client.login(process.env.TOKEN);
