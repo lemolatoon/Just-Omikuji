@@ -66,21 +66,20 @@ client.on("messageCreate", async (message: Message) => {
             }
             console.log(num);
             console.log(iter);
-            for (let i = 0; i <= iter / 500; i++) {
-                if (i == iter / 500) {
-                    if (iter % 500 == 0) {
-                        break;
-                    }
-                    predict_process(iter % 500, message);
-                } else {
-                    predict_process(Math.min(iter, 500), message);
-                }
-                // await setTimeout(() => { }, 100);
-            }
-            console.log(num);
-            console.log(iter);
-            console.log(iter % 500);
         }
+        for (let i = 0; i <= iter / 500; i++) {
+            if (i == iter / 500) {
+                if (iter % 500 == 0) {
+                    break;
+                }
+                predict_process(iter % 500, message);
+            } else {
+                predict_process(Math.min(iter, 500), message);
+            }
+            // await setTimeout(() => { }, 100);
+        }
+        console.log(iter);
+        console.log(iter % 500);
     }
 });
 
