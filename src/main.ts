@@ -23,28 +23,10 @@ const num_level = 9;
 
 export type Predictation = typeof Predictation[keyof typeof Predictation];
 
-function* range(start: number, end: number) {
-    for (let i = start; i < end; i++) {
-        yield i;
-    }
-}
-
 // TODO: add level automatically
 const predLevels = [0, 1, 2, 3, 4, 5, 6, 7, 8] as const;
 // const predLevels = [...range(0, num_level)] as const;
 type predLevel = typeof predLevels[number];
-
-const strs: Predictation[] = [
-    "大大吉",
-    "大吉",
-    "吉",
-    "中吉",
-    "小吉",
-    "末吉",
-    "凶",
-    "大凶",
-    "大大凶",
-];
 
 let high_light_map: Map<string, [predLevel, number, number]> = new Map();
 let low_light_map: Map<string, [predLevel, number, number]> = new Map();
@@ -191,7 +173,8 @@ function update_lowest(sender: string, level: predLevel) {
 function get_status_message(): string {
     let highest: [string[], predLevel, number[], number[]] | undefined =
         undefined;
-    let lowest: [string[], predLevel, number[], number[]] | undefined = undefined;
+    let lowest: [string[], predLevel, number[], number[]] | undefined =
+        undefined;
     for (const [user_name, [level, cnt, try_cnt]] of high_light_map) {
         if (highest == undefined) {
             // init
@@ -200,7 +183,9 @@ function get_status_message(): string {
             // update
             highest = [[user_name], level, [cnt], [try_cnt]];
             console.log(`${toPred(highest[1])}, ${toPred(level)}\n`);
-            console.log(`${toPred(level)} is better than ${toPred(highest[1])}\n`);
+            console.log(
+                `${toPred(level)} is better than ${toPred(highest[1])}\n`
+            );
         } else if (highest[1] == level) {
             // same
             highest[0].push(user_name);
@@ -215,7 +200,9 @@ function get_status_message(): string {
             lowest = [[user_name], level, [cnt], [try_cnt]];
         } else if (lowest[1] < level) {
             console.log(`${toPred(lowest[1])}, ${toPred(level)}\n`);
-            console.log(`${toPred(level)} is worse than ${toPred(lowest[1])}\n`);
+            console.log(
+                `${toPred(level)} is worse than ${toPred(lowest[1])}\n`
+            );
             // update
             lowest = [[user_name], level, [cnt], [try_cnt]];
         } else if (lowest[1] == level) {
@@ -294,29 +281,6 @@ function get_sum_list(list: number[]): number[] {
     }
 
     return sum_list;
-}
-
-function pred2num(pred: Predictation): number {
-    switch (pred) {
-        case Predictation.DAIDAIKICHI:
-            return 0;
-        case Predictation.DAIKICHI:
-            return 1;
-        case Predictation.KICHI:
-            return 2;
-        case Predictation.CHUKICHI:
-            return 3;
-        case Predictation.SYOKICHI:
-            return 4;
-        case Predictation.SUEKICHI:
-            return 5;
-        case Predictation.KYOU:
-            return 6;
-        case Predictation.DAIKYOU:
-            return 7;
-        case Predictation.DAIDAIKYOU:
-            return 8;
-    }
 }
 
 function toPred(level: predLevel): Predictation {
