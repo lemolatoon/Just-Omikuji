@@ -190,13 +190,13 @@ function get_status_message(): string {
     }
 
     let high_mess = `現在の最も運がいい人\n${high[0].toString()}\n`;
-    high_mess = high_mess + `${high[1]}の回数\n`;
+    high_mess = high_mess + `${toPred(high[1])}の回数\n`;
     for (let i = 0; i < high[0].length; i++) {
         high_mess = high_mess + `${high[0][i]} : ${high[2][i]} / ${high[3][i]} (${Math.round(high[2][i] / high[3][i] * 100)}%)\n`;
     }
 
     let low_mess = `現在の最も運が悪い人\n${low[0].toString()}\n`;
-    low_mess = low_mess + `${low[1]}の回数\n`;
+    low_mess = low_mess + `${toPred(low[1])}の回数\n`;
     for (let i = 0; i < low[0].length; i++) {
         low_mess = low_mess + `${low[0][i]} : ${low[2][i]} / ${low[3][i]} (${Math.round(low[2][i] / low[3][i] * 100)}%)\n`;
     }
