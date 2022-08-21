@@ -1,5 +1,6 @@
-setup:
-  dependencies:
-    install: npm install
-run:
-  worker: npm run run
+build:
+  docker:
+    web: Dockerfile
+config:
+  NPM_CONFIG_PRODUCTION: $NPM_CONFIG_PRODUCTION
+  TOKEN: $TOKEN
