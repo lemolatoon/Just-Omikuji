@@ -1,0 +1,5 @@
+setup:
+  dependencies:
+    install: npm install
+run:
+  worker: npm run run
