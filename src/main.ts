@@ -1,6 +1,8 @@
 import { Message, Client } from "discord.js";
 import dotenv from "dotenv";
 
+console.log("main.ts loaded...");
+
 dotenv.config();
 
 const client = new Client({
