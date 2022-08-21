@@ -13,8 +13,8 @@
         "run": "npm run build && npm run start"
     },
     "keywords": [],
-    "author": "",
-    "license": "ISC",
+    "author": "lemolatoon",
+    "license": "MIT",
     "devDependencies": {
         "@types/dotenv": "^8.2.0",
         "@typescript-eslint/eslint-plugin": "^5.25.0",
