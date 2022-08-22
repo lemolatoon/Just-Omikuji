@@ -6,7 +6,7 @@ console.log("main.ts loaded...");
 dotenv.config();
 
 const client = new Client({
-    intents: ["GUILDS", "GUILD_MESSAGES"],
+    intents: ["Guilds", "GuildMessages"],
 });
 
 const Predictation = {
@@ -40,7 +40,6 @@ client.once("ready", () => {
 
 client.on("messageCreate", async (message: Message) => {
     if (message.author.bot) return;
-    // message.channel.send("message created");
     if (message.content.startsWith("!ping")) {
         message.channel.send(`ping: ${client.ws.ping} ms`);
     }

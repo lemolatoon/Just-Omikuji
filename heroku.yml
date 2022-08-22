@@ -1,6 +1,6 @@
 build:
-  docker:
-    worker: Dockerfile
-  config:
-    NPM_CONFIG_PRODUCTION: $NPM_CONFIG_PRODUCTION
-    TOKEN: $TOKEN
+    docker:
+        worker: Dockerfile
+    config:
+        NPM_CONFIG_PRODUCTION: $NPM_CONFIG_PRODUCTION
+        TOKEN: $TOKEN
