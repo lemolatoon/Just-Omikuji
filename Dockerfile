@@ -10,8 +10,9 @@ COPY package*.json ./
 
 RUN npm install
 
-RUN npm run build
-
 COPY . .
 
-CMD ["node", "src/main.js"]
+RUN npm run build
+
+
+CMD ["node", "build/main.js"]
