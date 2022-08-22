@@ -1,5 +1,7 @@
 import { Message, Client, GatewayIntentBits, Partials } from "discord.js";
+import { createConnection } from "mysql2";
 import dotenv from "dotenv";
+import util from "util";
 
 console.log("main.ts loaded...");
 
@@ -8,6 +10,24 @@ dotenv.config();
 const client = new Client({
     intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent],
 });
+
+const connection = createConnection({
+    // host: process.env.DB_HOSTNAME,
+    host: "127.0.0.1",
+    // user: process.env.DB_USERNAME,
+    user: "root",
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME,
+})
+
+connection.connect((err) => {
+    if (err) {
+        console.log("DB CONNECTION FAILED");
+        console.log(err);
+    } else {
+        console.log("DB CONNECTED");
+    }
+})
 
 
 const Predictation = {
@@ -48,6 +68,23 @@ client.on("messageCreate", async (message: Message) => {
     if (message.content == "!reset") {
         high_light_map = new Map();
         low_light_map = new Map();
+    }
+
+    if (message.content.startsWith("!query")) {
+        const splitted = message.content.split(" ");
+        let query = "";
+        for (let i = 1; i < splitted.length; i++) {
+            query = query + " " + splitted[i];
+        }
+        connection.query(query, (err, results, fields) => {
+            if (results === undefined) {
+                message.channel.send("不正なqueryです。");
+            } else {
+                console.log("query: %s", query);
+                console.log(results);
+                message.channel.send(util.format(results));
+            }
+        });
     }
 
     if (message.content == "!status" || message.content == "！ステータス") {
