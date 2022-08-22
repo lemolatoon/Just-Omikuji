@@ -1,4 +1,4 @@
-import { Message, Client } from "discord.js";
+import { Message, Client, GatewayIntentBits, Partials } from "discord.js";
 import dotenv from "dotenv";
 
 console.log("main.ts loaded...");
@@ -6,8 +6,9 @@ console.log("main.ts loaded...");
 dotenv.config();
 
 const client = new Client({
-    intents: ["Guilds", "GuildMessages"],
+    intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent],
 });
+
 
 const Predictation = {
     DAIDAIKICHI: "大大吉",
