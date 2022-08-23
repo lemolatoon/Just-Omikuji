@@ -63,6 +63,17 @@ client.on("messageCreate", async (message: Message) => {
         message.channel.send(`ping: ${client.ws.ping} ms`);
     }
 
+    if (message.content == "!reconnect") {
+      connection.connect((err) => {
+          if (err) {
+              console.log("DB CONNECTION FAILED");
+              console.log(err);
+          } else {
+              console.log("DB CONNECTED");
+          }
+      })
+    }
+
     if (message.content == "!reset") {
         high_light_map = new Map();
         low_light_map = new Map();
