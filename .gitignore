@@ -1,5 +1,6 @@
 /build
 .env_
+/sql.sh
 
 # Logs
 logs

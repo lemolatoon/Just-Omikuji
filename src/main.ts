@@ -77,6 +77,7 @@ client.on("messageCreate", async (message: Message) => {
         connection.query(query, (err, results, fields) => {
             if (results === undefined) {
                 message.channel.send("不正なqueryです。");
+                console.log(err);
             } else {
                 console.log("query: %s", query);
                 console.log(results);
